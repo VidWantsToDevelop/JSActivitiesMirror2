@@ -51,6 +51,13 @@
                     newRgb = changeRgb(whichSlider, sliderValue);
                     // Call a function that builds a new CSS background-color property (as a string), passing it the updated RGB array (newRgb)
                     var newCSS = writeCSS(newRgb);
+                    
+
+                    // This code was written with the help of ChatGPT and has nothing to do with the assignment itself, but I thought it would be more interesting to have the text color change based on the background color
+                    var luminance = getLuminance(newRgb[0], newRgb[1], newRgb[2]);
+                    var textColor = luminance > 0.5 ? 'black' : 'white';
+
+                    pageBg.style.color = textColor;
                     // Directly change the background-color of the page using the new CSS rgb value
                     pageBg.style.backgroundColor = newCSS;
                 };
@@ -59,7 +66,50 @@
             /* Functions
 		-------------------------------------------------- */
             // STEP 1: Write a function called changeRgb that accepts two parameters, channel and value
+            function changeRgb(channel, value){
+                switch (channel) {
+                    case "red":
+                        rgb[0] = value;
+                        break;
+                    case "green":
+                        rgb[1] = value;
+                        break;
+                    case "blue":
+                        rgb[2] = value;
+                        break;
+                    default:
+                        console.log("Error: no channel selected");
+                        break;
+                }
 
+                return rgb;
+            }
+
+            function writeCSS(rgb) {
+                var newColor = "rgb("
+
+                var i = 0;
+                
+                while (i < rgb.length) {
+                    newColor += rgb[i]+ ",";
+                    i++;
+                }
+
+                newColor = newColor.slice(0, -1) + ")";
+                return newColor;
+            }
+
+            function getLuminance(r, g, b) {
+                var a = [r, g, b].map((v) => {
+                    v /= 255;
+                    
+                    return v <= 0.03928
+                        ? v / 12.92
+                        : Math.pow((v + 0.055) / 1.055, 2.4);
+                })
+
+                return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
+            }
             // STEP 2: Build a switch based on the value of the channel parameter (red, green, or blue) (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/switch)
 
             // STEP 3: Inside each case, update the appropriate global rgb array element (0, 1, or 2)
